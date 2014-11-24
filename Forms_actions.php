@@ -86,7 +86,6 @@ function fa_meta_box_callback( $post ) {
 		}
 	}
 
-
 	echo '<input type="hidden" id="fa_create_object" name="fa_create_object" value="'.$create_object.'" size="25" />';
 	echo '<input type="hidden" id="fa_alpaca_data" name="fa_alpaca_data" value="'.$value_alpaca.'" size="25" />';
 
@@ -97,7 +96,7 @@ function fa_meta_box_callback( $post ) {
 			    /* ----------------------------------------------------------------------- */	
 			    	<?php if($value_alpaca != ''){ ?>
 			    	"data" : <?php echo urldecode ( $value_alpaca );?>,
-			    	<? } ?>
+			    	<?php } ?>
 			    	"options": {
 						"fields": {
 							
@@ -177,8 +176,6 @@ function fa_meta_box_callback( $post ) {
 		                //if (renderedForm.isValid(true)) {
 		                  var val2 = renderedForm.getValue();
 		                  $('#fa_alpaca_data').val(encodeURIComponent(JSON.stringify(val2)));
-
-		                 // $('#<?php echo $my_widget_id."-extra-data"; ?>').val(encodeURIComponent(JSON.stringify(val))); 
 		                //}
 		              });
 		            } 
@@ -238,19 +235,14 @@ function fa_save_meta_box_data( $post_id ) {
 	
 }
 add_action( 'save_post', 'fa_save_meta_box_data' );
-
-
-
 /* METABOX end ------------------------------------ */
 
 
 /* DISPLAY filter ------------------------------------ */
-
 function fa_realize_form_actions() {
 	
 	if( isset($_POST['acf_nonce']) && wp_verify_nonce($_POST['acf_nonce'], 'input') )
 	{
-		
 		
 		global $post;
 		$args = json_decode(urldecode(get_post_meta( $post->ID, '_meta_fa_box_alpaca', true )));
@@ -258,7 +250,6 @@ function fa_realize_form_actions() {
 		/*echo '<pre>';
 		var_dump($args);
 		echo '</pre>';*/
-
 
 		foreach ($args as $key => $value) {
 
@@ -280,7 +271,4 @@ function fa_realize_form_actions() {
 		return $returnObj;
 
 	}
-
-	
-
 }
