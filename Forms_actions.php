@@ -137,7 +137,7 @@ function fa_meta_box_callback( $post ) {
 						"properties": {
 							/* -------------------------- */
 					      	"fa_send_email": {
-			                    "description": "Name your form field as: email (addres to send), title* (email title), message* (email message), succes (mesage after send)",
+			                    "description": "Name your form field as: email (addres to send), subject* (email subject), message* (email message), succes (mesage after send)",
 			                    "type": "boolean"
 			                },
 			                /* -------------------------- */			               

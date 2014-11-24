@@ -44,8 +44,6 @@ function fa_targeted_questions($args){
 function fa_send_email($args){
 	
 	$this_form_array = get_fields($post->ID);
-	//var_dump($this_form_array);
-
 	// Example using the array form of $headers
 	// assumes $to, $subject, $message have already been defined earlier...
 
@@ -62,13 +60,11 @@ function fa_send_email($args){
 	$secondEnd = prev($pathAtray); 
 	$upload_dir = $upload_dir.'/'.$secondEnd.'/'.$end;
 
+	//var_dump($this_form_array);
+	//die(); 
 
 
-	//echo $upload_dir.'<br/>';
-	//die($mode); 
-
-
-	wp_mail( $this_form_array['email'] , $this_form_array['title'] , $this_form_array['message'], $headers , array($upload_dir) );
+	wp_mail( $this_form_array['email'] , $this_form_array['subject'] , $this_form_array['message'], $headers , array($upload_dir) );
 
 }
 
