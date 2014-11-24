@@ -5,7 +5,7 @@ Plugin URI: https://github.com/dadmor/Forms_actions
 Description: WordPress plugin to run actions after form sending.
 Author: gdurtan
 Author URI: grzegorz.durtan.pl
-Version: 1.0.0
+Version: 1.0.01
 License: GPL2
 */
 
