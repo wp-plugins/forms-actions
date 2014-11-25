@@ -82,8 +82,7 @@ function fa_send_email($args){
 
 
 			$attachment = $value;
-			var_dump($attachment);
-
+			
 			$pathAtray = explode('/',$attachment);
 	
 			$end = end($pathAtray); 
