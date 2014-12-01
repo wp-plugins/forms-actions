@@ -5,7 +5,7 @@ Plugin URI: https://github.com/dadmor/Forms_actions
 Description: WordPress plugin to run actions after form sending.
 Author: gdurtan
 Author URI: grzegorz.durtan.pl
-Version: 1.0.11
+Version: 1.0.3
 License: GPL2
 */
 
@@ -106,6 +106,9 @@ function fa_meta_box_callback( $post ) {
 			    			"fa_targeted_questions_dependency": {
 		                    	"rightLabel": "Targeted questions"
 		               		},
+		               		"fa_create_post_dependency": {
+		               			"rightLabel": "Create post"
+		               		},
 		               		"fa_targeted_questions": {
 		               			"fields": {
 				               		"item": {
@@ -127,6 +130,9 @@ function fa_meta_box_callback( $post ) {
 		   					"fa_clear_form": {
 			    				"rightLabel": "Clear to defaults"
 			    			},
+			                "fa_dont_display_after_send": {
+			                   "rightLabel": "Dont display form after you send"
+			                },
 		   				}   		
 			    	},
 			    	"schema": {
@@ -160,9 +166,32 @@ function fa_meta_box_callback( $post ) {
 				                    }
 				                }
 			                },
+			                /* -------------------------- */			               
+			                "fa_create_post_dependency": {
+			                    "description": "Use form to create new post or edit exist. Name your form field as: post_title, post_content, post_excerpt, succes (mesage after send)",
+			                    "type": "boolean"
+			                },
+			                 /* -------------------------- */
+	                        "fa_create_post": {
+	                        	"dependencies": "fa_create_post_dependency",
+	 							"type": "object",
+	                        		"properties": {
+				        				"post_type": {  
+			                        		//"dependencies": "fa_targeted_questions_dependency",
+			                            	"title": "Select post type",		                            
+			                           		
+			                           		"enum": ["post","page","custom_posttype"]
+				                   		}
+				                    }
+			                },
 			                /* -------------------------- */
 			                "fa_clear_form": {
 			                    "description": "Always clear your form to defaults",
+			                    "type": "boolean"
+			                },
+			                /* -------------------------- */
+			                "fa_dont_display_after_send": {
+			                    "description": "Dont display form again, after you send data",
 			                    "type": "boolean"
 			                },
 			                /* -------------------------- */
@@ -247,7 +276,7 @@ function fa_realize_form_actions() {
 		global $post;
 		$args = json_decode(urldecode(get_post_meta( $post->ID, '_meta_fa_box_alpaca', true )));
 		
-		/*echo '<pre>';
+/*		echo '<pre>';
 		var_dump($args);
 		echo '</pre>';*/
 

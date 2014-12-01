@@ -53,9 +53,9 @@ function fa_send_email($args){
 	//$headers[] = 'Cc: iluvwp@wordpress.org'; // note you can just use a simple email address
 	$upload_dir = wp_upload_dir();
 	$upload_dir = $upload_dir['basedir'];
-	
 
 	$counter = 0;
+
 	foreach ($this_form_array as $key => $value) {
 		
 		$pre_kay_name = explode('-',$key);
@@ -68,18 +68,8 @@ function fa_send_email($args){
 		if($pre_kay_name[0] == 'subject'){
 			$subjects_array[$key] = $value;
 		}
-		/* messages array */
-		if($pre_kay_name[0] == 'message'){
-			$messages_array[$key] = $value;
-			
-			if($value != ''){
-				$message.= '<p><b>'. $pre_kay_name[1] .'</b> :'. $value .'</p>';
-			}
-		
-		}
 		/* attachments array */
 		if($pre_kay_name[0] == 'attachment'){
-
 
 			$attachment = $value;
 			
@@ -94,27 +84,81 @@ function fa_send_email($args){
 		$counter++;
 	}
 
-/*	echo '<pre>';
+	/* Create Message */
+	foreach ( get_field_objects($post->ID) as $key => $value) {
+		$pre_kay_name = explode('-',$key);
+		if($pre_kay_name[0] == 'message'){
+			//echo $key.'-'.$value['order_no'].'<br/>';
+			$techArr['label'] = $value['label'];
+			$techArr['value'] = $value['value'];
+			$messages_array[intval($value['order_no'])] = $techArr;
+		}
+	}
+
+	ksort($messages_array);
+
+	$message.= '<table border="0" width="100%">';
+	foreach ($messages_array as $key => $value) {
+		
+		if($value['value'] != ''){
+				
+				/* plain text*/
+				//$message.= '<p><b>'. $value['label'] .'</b> :'. $value['value'] .'</p>';
+
+				/* table*/
+				$message.= '<tr><td style="border-bottom:1px solid #ccc; padding:5px">'. $value['label'] .'</td><td style="border-bottom:1px solid #ccc; padding:5px">'. $value['value'] .'</td></tr>';
+		}
+	}
+	$message.= '</table>';	
+	
+	/*	
+	echo '<pre>';
 	var_dump($messages_array);
-	var_dump($subjects_array);
-	var_dump($emails_array);
-	var_dump($attachments_array);
 	echo '</pre>';
-	die(); */
+	*/
 
 	wp_mail( $emails_array , reset($subjects_array) , $message, $headers , $attachments_array );
-	
 
 }
+
+function fa_create_post($args){
+
+	$new_post['post_type'] = $args->post_type;
+	$this_form_array = get_fields($post->ID);
+
+	foreach ($this_form_array as $key => $value) {
+		if($key == 'post_title'){
+			$new_post['post_title'] = $value;
+		}
+		if($key == 'post_content'){
+			$new_post['post_content'] = $value;
+		}
+	}
+
+	$new_post['post_status'] = 'publish';
+	wp_insert_post( $new_post );
+
+}
+
 
 function fa_clear_form($args){
 
 	$fields = get_fields($post->ID); 
 	foreach ($fields as $key => $value) {
 		$field_object  = get_field_object($key);
+		
 /*		echo '<pre>';
 			var_dump($field_object["default_value"]);
 		echo '</pre>';*/
+		
 		update_field($key, $field_object["default_value"], $post->ID);
 	}
+}
+
+function fa_dont_display_after_send($args){
+
+	global $acf;
+	$acf -> AFD_block_display = true;
+	//var_dump($acf);
+
 }
