@@ -1,6 +1,7 @@
 <?php
 /* acces to wordpress functions with alpacajs forms API */
 
+// Render posts by posttype
 function render_posttype_to_alpaca_string($args){
   
   /* $args = 'post_type';  */
@@ -27,6 +28,43 @@ function render_posttype_to_alpaca_string($args){
   return $postTitleString;
 
 }
+
+function render_posttype_to_alpaca_array($args){
+  
+  /* $args = 'post_type';  */
+
+  $postTitleString = "";
+  global $wpdb;   
+  $query = "
+  SELECT $wpdb->posts.* 
+  FROM $wpdb->posts
+  WHERE $wpdb->posts.post_status = 'publish' 
+  AND $wpdb->posts.post_type = '".$args."'
+  ORDER BY $wpdb->posts.post_date DESC
+  ";  
+  $posts = $wpdb->get_results( $query , object );
+
+    // var_dump( $posts);
+  $postTitleString = '';
+  foreach ( $posts as $db_post ){       
+      $postTitleString .= ',"'. $db_post->post_title.'"';
+  } 
+  return $postTitleString;
+
+}
+
+
+
+function render_posttypes_list_to_alpaca_array(){
+  $post_types = get_post_types( '', 'names' ); 
+  $postTitleString = '';
+  foreach ( $post_types as $post_type ) {
+     $postTitleString .= ',"'. $post_type .'"';
+  }
+  return $postTitleString;
+}
+
+
 
 function render_users_to_alpaca_string($args){
 

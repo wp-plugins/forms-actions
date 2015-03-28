@@ -3,7 +3,7 @@ Contributors: gdurtan
 Tags: Send email, quesionarie, ACF, Advanced Custom Field, Frontend
 Requires at least: 3.1
 Tested up to: 4.0
-Stable tag: 1.0.3
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Forms actions - plugin to realize form actions like send email, create post, pool requests. Now work only with ACF forms (in feauture with Ninja Forms, Gravity Forms, Contact Form 7)
@@ -27,6 +27,15 @@ Upload the Forms actions plugin to your blog, Activate it.
 1, 2, 3: You're done!
 
 == Changelog ==
+= 1.1.0 =
+* Better display
+* New action - Create post
+* New action - Update post
+* New action - Register user
+* New action - Update user
+* New action - Login user
+* Add 2signon autentication 
+* Add new ajax alpaca api methods
 
 = 1.0.3 =
 * Better email template
