@@ -5,10 +5,10 @@ Plugin URI: https://github.com/dadmor/Forms_actions
 Description: WordPress plugin to run actions after form sending.
 Author: gdurtan
 Author URI: grzegorz.durtan.pl
-Version: 1.1.1
+Version: 1.2.1
 License: GPL2
 */
-define('Forms_actions','Forms_actions.1.1.1');
+define('Forms_actions','Forms_actions.1.2.1');
 
 function fa_alpaca_lib_init() {
 
@@ -478,10 +478,16 @@ function fa_realize_form_actions() {
             $param = explode(',',$returnObj["redirect_param"]);
             foreach ($param as $key) {
             	$key = explode(':',$key);
+            	if($key[1] == '{user_id}'){
+					$current_user_id = get_current_user_id();
+            		$key[1] = $current_user_id;
+            	}
             	$param_array[$key[0]] = $key[1];
+            	
             }
 
         }
+
 
         if($returnObj["redirect_to_url"] != null){
 
@@ -509,7 +515,17 @@ function fa_realize_form_actions() {
 
 }
 
-function process_actions($args){
+function process_actions($args, $post_id = '', $ajax = false){
+	
+	global $FA_ajax;
+	$FA_ajax = $ajax;
+	global $post;
+
+	if($post_id != ''){
+		$post = get_post($post_id);
+	}
+
+
 	if($args != NULL){
 
 
@@ -523,6 +539,7 @@ function process_actions($args){
 					if( $swith != 'dependency'){
 						@call_user_func_array($key,array($value));
 						//echo $key.'('.array($value).')<br/>';
+						//var_dump($key,$value);
 					}
 				}
 
@@ -542,3 +559,19 @@ function process_actions($args){
 		}
 }
 
+add_action('admin_menu', 'FA_menu');
+function FA_menu()
+{   
+  // editor + administrator = moderate_comments;
+  add_menu_page('Forms actions', 'Forms actions', 'administrator', 'forms_actions', 'forms_actions_callback');
+  // submenu with calbac
+  //add_submenu_page('acf', 'UiGEN hierarchy', 'UiGEN hierarchy', 'administrator', 'url_uigen_hierarchy', 'UiGEN_hierarchy_callback');
+  // submenu from defined posttype
+  //add_submenu_page('url_uigen_core', 'UiGEN hierarchy', 'UiGEN hierarchy', 'manage_options', 'edit.php?post_type=template_hierarchy');  //add_submenu_page('url_uigencore', 'Dodaj', 'Dodaj', 'administrator', 'url_add_mod', 'moderator_ADD');  
+  //add_submenu_page('url_uigen_core', 'UiGEN Content parts', 'UiGEN Content parts', 'manage_options', 'edit.php?post_type=content_parts');  //add_submenu_page('url_uigencore', 'Dodaj', 'Dodaj', 'administrator', 'url_add_mod', 'moderator_ADD');  
+
+}
+
+function forms_actions_callback(){
+	require_once( plugin_dir_path( __FILE__ ) . '/inc/fa_admin_gui.php' );
+}
