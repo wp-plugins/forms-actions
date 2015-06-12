@@ -1,10 +1,7 @@
 <?php
 require_once("../../../../wp-load.php");
-if ( current_user_can( 'manage_options' ) ) {
+if ( current_user_can( 'manage_options' ) && $_POST['object_data'] != NULL ) {
     /* A user with admin privileges */
-
-
-
 			require_once plugin_dir_path( __DIR__ ) . '/inc/Spyc.php';
 			/* ----------------------------------- */
 			/* 1.1. Create database declaration    */
@@ -22,12 +19,9 @@ if ( current_user_can( 'manage_options' ) ) {
 
 		    $db_array = array_merge( $db_old_array , $db_array );
 
-		   
-
-
 			file_put_contents( plugin_dir_path( __DIR__ ) . 'yaml/database/arguments/database-arguments.yaml' , Spyc::YAMLDump( $db_array ));
 
-					    // create new table
+			// create new table
 
 			global $wpdb;	
 
@@ -48,21 +42,49 @@ if ( current_user_can( 'manage_options' ) ) {
 				}
 
 				$db_create_table_string .= " PRIMARY KEY (`ID`) \n";
-				$db_create_table_string .= " CHARACTER SET utf8 COLLATE utf8_general_ci \n";
+				//$db_create_table_string .= " CHARACTER SET utf8 COLLATE utf8_general_ci \n";
 				$db_create_table_string .= " )  \n";
 				$db_tables_array[$db_tb_name] = $db_create_table_string;
 			}
 			//var_dump($db_tables_array);
 
 			// Create tables
-			echo '<pre style="font-size:9px">';
-			foreach ($db_tables_array as $db_tb => $db_sql_synax) {
-				echo '<br/>----------------<br/>create '.$db_tb.'<br/>----------------<br/>';
-				echo $db_sql_synax;
-				$wpdb->query($db_sql_synax);
-			
+			function print_resoult(){
+				echo '<pre style="font-size:9px">';
+				foreach ($db_tables_array as $db_tb => $db_sql_synax) {
+					echo '<br/>----------------<br/>create '.$db_tb.'<br/>----------------<br/>';
+					echo $db_sql_synax;
+					$db_msg = $wpdb->query($db_sql_synax);
+					
+					echo '<br/>----------------return----------------<br/>';
+					echo $db_msg;
+				}
+				echo '</pre>';
 			}
-			echo '</pre>';
+}
+
+/* AJAX METHODS */
+if($_POST['wpdbselect'] != NULL){
+	global $wpdb;
+	//global $WP_user;
+	
+
+	$sql =
+		"
+		SELECT * 
+		FROM ".$wpdb->prefix.$_POST['from']."
+		WHERE id_spotkanie = ".$_POST['where']['id_spotkanie']."
+	";
+
+	$resoults = $wpdb->get_results($sql);
+	
+	
+	foreach ($resoults as &$value) {
+		$value->avatar = get_user_meta($value->id_user,'avatar',true);
+	}
 
 }
+
+echo json_encode($resoults);
+
 ?>
