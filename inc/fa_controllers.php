@@ -267,7 +267,7 @@ function fa_register_user($args){
 		if($key == 'role'){
 			$userdata['role'] = $value;
 		}
-		$userdata['role'] = 'pending';
+		$userdata['role'] = 'subscriber';
 
 	}
 	if($args->login_as_email == true){
@@ -318,6 +318,8 @@ function fa_register_user($args){
 	        $id_to_redirect = $args->redirect_to_id;
 	        $activation_link = add_query_arg( array( 'key' => $code, 'user' => $user_id, 'redirect_id' => $id_to_redirect ), get_permalink( /* YOUR ACTIVATION PAGE ID HERE */ ));
 
+			echo $activation_link;
+			
 			global $post;
 			$display_args = json_decode( urldecode ( get_post_meta($post->ID,'_meta_afd_form_render_box_alpaca', true )), true );
 
@@ -388,8 +390,13 @@ function fa_update_user($args){
 
 function fa_login_user($args){
 
+	global $post;
+	global $FA_ajax;
+
+
 
 	$this_form_array = get_fields($post->ID);
+
 	$creds = array();
 	foreach ($this_form_array as $key => $value) {
 		if($key == 'user_login'){
@@ -404,7 +411,7 @@ function fa_login_user($args){
 	$user = wp_signon( $creds, false );
 
 	if ( is_wp_error($user) ){
-		echo $user->get_error_message();
+		$return_msg =  $user->get_error_message();
 
 	}else{
 
@@ -415,6 +422,20 @@ function fa_login_user($args){
 		wp_redirect($args->redirect);
 		exit;*/
 	}
+
+	if($FA_ajax == true){
+		if($return_msg != ''){
+			echo $return_msg;
+		}else{
+			echo json_encode($user);
+		}
+	}else{
+		echo $return_msg;
+	}
+		
+	
+
+
 
 
 }
